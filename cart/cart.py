@@ -9,6 +9,14 @@ class Cart:
         if not cart:
             cart = self.session[settings.CART_SESSION_ID] = {}
         self.cart = cart
+        cleaned = False
+        for item in self.cart.values():
+            if "producto" in item or "subtotal" in item:
+                item.pop("producto", None)
+                item.pop("subtotal", None)
+                cleaned = True
+        if cleaned:
+            self.session.modified = True
 
     def add(self, producto, cantidad=1):
         producto_id = str(producto.id)
@@ -43,9 +51,12 @@ class Cart:
         productos = Product.objects.filter(id__in=producto_ids)
         for producto in productos:
             item = self.cart[str(producto.id)]
-            item["producto"] = producto
-            item["subtotal"] = float(item["precio"]) * item["cantidad"]
-            yield item
+            yield {
+                "producto": producto,
+                "precio": item["precio"],
+                "cantidad": item["cantidad"],
+                "subtotal": float(item["precio"]) * item["cantidad"],
+            }
 
     def __len__(self):
         return sum(item["cantidad"] for item in self.cart.values())
