@@ -6,8 +6,25 @@ class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
         fields = ["titulo", "artista", "descripcion", "genero", "precio", "stock", "imagen", "anio_lanzamiento"]
+        labels = {
+            "titulo": "Título",
+            "artista": "Artista",
+            "descripcion": "Descripción",
+            "genero": "Género",
+            "precio": "Precio",
+            "stock": "Stock",
+            "imagen": "Imagen de portada",
+            "anio_lanzamiento": "Año de lanzamiento",
+        }
         widgets = {
-            "descripcion": forms.Textarea(attrs={"rows": 4}),
+            "titulo": forms.TextInput(attrs={"class": "form-control"}),
+            "artista": forms.TextInput(attrs={"class": "form-control"}),
+            "descripcion": forms.Textarea(attrs={"class": "form-control", "rows": 4}),
+            "genero": forms.Select(attrs={"class": "form-select"}),
+            "precio": forms.NumberInput(attrs={"class": "form-control"}),
+            "stock": forms.NumberInput(attrs={"class": "form-control"}),
+            "imagen": forms.ClearableFileInput(attrs={"class": "form-control"}),
+            "anio_lanzamiento": forms.NumberInput(attrs={"class": "form-control"}),
         }
 
     def clean_precio(self):
