@@ -6,3 +6,4 @@ db.sqlite3
 *.pyo
 .env
 .env.local
+media/productos/discogs_*

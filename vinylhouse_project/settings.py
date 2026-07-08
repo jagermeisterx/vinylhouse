@@ -32,11 +32,17 @@ ALLOWED_HOSTS = ["*"]
 
 CSRF_TRUSTED_ORIGINS = [
     "https://localhost:8000",
+    "http://localhost:8000",
     "https://*.preview.app.github.dev",
     "https://*.app.github.dev",
+    "http://*.app.github.dev",
 ]
 
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
+CSRF_USE_SESSIONS = True
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
 
 
 
