@@ -11,10 +11,20 @@ https://docs.djangoproject.com/en/6.0/ref/settings/
 """
 
 from pathlib import Path
+import os
+from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-SECRET_KEY = "django-insecure-*m4p#$zdje$xn&t)k2t5p*w6%70@0h!^%g%%r(+^!@y1%d-_3@"
+load_dotenv(BASE_DIR / ".env")
+
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY",
+    "django-insecure-*m4p#$zdje$xn&t)k2t5p*w6%70@0h!^%g%%r(+^!@y1%d-_3@",
+)
+
+DISCOGS_USER_TOKEN = os.environ.get("DISCOGS_USER_TOKEN", "")
+DISCOGS_USER_AGENT = os.environ.get("DISCOGS_USER_AGENT", "VinylHouse/1.0")
 
 DEBUG = True
 

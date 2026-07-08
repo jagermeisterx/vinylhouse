@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>Buscar en Discogs</h1>
+    <a href="{% url 'admin_product_list' %}" class="btn btn-outline-secondary">
+        &larr; Volver a productos
+    </a>
+</div>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+        <form method="get" action="{% url 'discogs_search' %}">
+            <div class="input-group input-group-lg">
+                <input type="text" name="q" value="{{ query|default:'' }}" class="form-control"
+                    placeholder="Buscar por título, artista, etc. (ej: Dark Side of the Moon Pink Floyd)" required>
+                <button type="submit" class="btn btn-primary">Buscar</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% if search_result %}
+    <p class="text-muted">
+        {{ search_result.count|floatformat:0 }} resultados encontrados ·
+        página {{ search_result.page|add:1 }} de {{ search_result.pages }}
+    </p>
+
+    {% if search_result.results %}
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Portada</th>
+                        <th>Título / Artista</th>
+                        <th style="width: 100px;">Año</th>
+                        <th style="width: 200px;">Formato</th>
+                        <th style="width: 150px;">Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in search_result.results %}
+                        <tr>
+                            <td>
+                                {% if r.thumb %}
+                                    <img src="{{ r.thumb }}" alt="portada" style="width: 60px; height: 60px; object-fit: cover;" class="rounded">
+                                {% else %}
+                                    <div class="bg-light d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                                        <span class="small text-muted">N/A</span>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>{{ r.titulo }}</td>
+                            <td class="text-muted">{{ r.year|default:'-' }}</td>
+                            <td class="small text-muted">{{ r.format|default:'-' }}</td>
+                            <td>
+                                <form action="{% url 'discogs_import' r.discogs_id %}" method="post">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn btn-sm btn-success">
+                                        Importar
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        {% if search_result.pages > 1 %}
+            <p class="text-muted small mt-3">
+                Mostrando los primeros 50 resultados de {{ search_result.count|floatformat:0 }}.
+                Refina su búsqueda para disminuir el rango.
+            </p>
+        {% endif %}
+    {% else %}
+        <p class="text-muted">No se encontraron resultados para "{{ query }}".</p>
+    {% endif %}
+{% elif query %}
+    <p class="text-muted">No se pudo realizar la búsqueda.</p>
+{% else %}
+    <p class="text-muted">Escribe un término de búsqueda para empezar.</p>
+{% endif %}
+{% endblock %}

@@ -2,7 +2,10 @@
 
 {% block content %}
 <h1 class="mb-4">Administrar productos</h1>
-<a href="{% url 'admin_product_create' %}" class="btn btn-success mb-3">Crear nuevo producto</a>
+<div class="mb-3">
+    <a href="{% url 'admin_product_create' %}" class="btn btn-success">Crear nuevo producto</a>
+    <a href="{% url 'discogs_search' %}" class="btn btn-outline-primary">Buscar en Discogs</a>
+</div>
 
 <table class="table table-striped">
     <thead>

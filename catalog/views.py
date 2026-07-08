@@ -1,9 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
+from django.core.files.base import ContentFile
 from .models import Product, Genre
 from .forms import ProductForm
 from .decorators import staff_required
+from . import discogs_service
 
 
 def catalog_list(request):
@@ -70,3 +72,69 @@ def admin_product_delete(request, pk):
         messages.success(request, f"Producto '{producto.titulo}' desactivado correctamente.")
         return redirect("admin_product_list")
     return render(request, "catalog/admin_product_confirm_delete.html", {"producto": producto})
+
+
+@login_required
+@staff_required
+def discogs_search(request):
+    query = request.GET.get("q", "").strip()
+    search_result = None
+    if query:
+        try:
+            search_result = discogs_service.search_releases(query)
+        except Exception as e:
+            messages.error(request, f"Error al buscar en Discogs: {e}")
+            search_result = {"results": [], "count": 0, "pages": 0, "page": 0}
+    return render(request, "catalog/discogs_search.html", {
+        "query": query,
+        "search_result": search_result,
+    })
+
+
+@login_required
+@staff_required
+def discogs_import(request, discogs_id):
+    if request.method != "POST":
+        return redirect("discogs_search")
+    if Product.objects.filter(discogs_id=str(discogs_id)).exists():
+        existing = Product.objects.get(discogs_id=str(discogs_id))
+        messages.error(
+            request,
+            f"Este release ya fue importado como producto #{existing.id} '{existing.titulo}'. "
+            f"<a href='/admin-productos/{existing.id}/editar/'>Editar el existente</a>.",
+        )
+        return redirect("discogs_search")
+    try:
+        rel = discogs_service.get_release(discogs_id)
+    except Exception as e:
+        messages.error(request, f"No se pudo obtener el release de Discogs: {e}")
+        return redirect("discogs_search")
+    genero_obj, _ = Genre.objects.get_or_create(
+        nombre=rel["genero"],
+    )
+    producto = Product(
+        titulo=rel["titulo"][:150],
+        artista=rel["artista"][:150],
+        descripcion=rel["descripcion"],
+        genero=genero_obj,
+        precio=0,
+        stock=0,
+        anio_lanzamiento=rel["anio_lanzamiento"],
+        discogs_id=str(rel["discogs_id"]),
+        sello=rel["sello"][:200],
+        formato=rel["formato"][:100],
+        tracklist=rel["tracklist"],
+    )
+    if rel["imagen_url"]:
+        try:
+            placeholder, ext, data = discogs_service.download_image(rel["imagen_url"])
+            img_name = f"discogs_{rel['discogs_id']}.{ext}"
+            producto.imagen.save(img_name, ContentFile(data), save=False)
+        except Exception as e:
+            messages.warning(request, f"No se pudo descargar la imagen: {e}")
+    producto.save()
+    messages.success(
+        request,
+        f"Producto '{producto.titulo}' importado. Revisa precio y stock.",
+    )
+    return redirect("admin_product_edit", pk=producto.id)
