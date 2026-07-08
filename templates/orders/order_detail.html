@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Orden #{{ order.id }}</h1>
+<p>Fecha: {{ order.fecha_creacion|date:"d/m/Y H:i" }}</p>
+<p>Estado: <span class="badge bg-success">{{ order.estado }}</span></p>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Producto</th>
+            <th>Precio unitario</th>
+            <th>Cantidad</th>
+            <th>Subtotal</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in order.items.all %}
+            <tr>
+                <td>{{ item.producto.titulo }} - {{ item.producto.artista }}</td>
+                <td>${{ item.precio_unitario|floatformat:0 }}</td>
+                <td>{{ item.cantidad }}</td>
+                <td>${{ item.subtotal|floatformat:0 }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="3" class="text-end fw-bold">Total:</td>
+            <td class="fw-bold">${{ order.total|floatformat:0 }}</td>
+        </tr>
+    </tfoot>
+</table>
+
+<a href="{% url 'order_list' %}" class="btn btn-outline-primary">&larr; Mis órdenes</a>
+{% endblock %}

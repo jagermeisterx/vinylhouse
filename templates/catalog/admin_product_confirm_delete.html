@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Desactivar producto</h1>
+<p>¿Estás seguro de que deseas desactivar <strong>{{ producto.titulo }}</strong> de <strong>{{ producto.artista }}</strong>?</p>
+<p class="text-muted">Esto ocultará el producto del catálogo público, pero no borrará el registro de la base de datos.</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Sí, desactivar</button>
+    <a href="{% url 'admin_product_list' %}" class="btn btn-outline-secondary">Cancelar</a>
+</form>
+{% endblock %}

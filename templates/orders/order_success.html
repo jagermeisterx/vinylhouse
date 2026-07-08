@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="text-center">
+    <h1 class="text-success">¡Compra exitosa!</h1>
+    <p class="fs-5">Tu orden #{{ order.id }} ha sido registrada correctamente.</p>
+    <p>Total pagado: <strong>${{ order.total|floatformat:0 }}</strong></p>
+    <p>Cantidad de productos: <strong>{{ order.items.count }}</strong></p>
+
+    <div class="mt-4">
+        <a href="{% url 'catalog_list' %}" class="btn btn-primary">Volver al catálogo</a>
+        <a href="{% url 'order_detail' order.id %}" class="btn btn-outline-primary">Ver detalle de la orden</a>
+    </div>
+</div>
+{% endblock %}

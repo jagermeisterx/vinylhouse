@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Catálogo de vinilos</h1>
+
+{% if generos %}
+<form method="get" class="mb-4">
+    <select name="genero" class="form-select w-auto d-inline" onchange="this.form.submit()">
+        <option value="">Todos los géneros</option>
+        {% for genero in generos %}
+            <option value="{{ genero.id }}" {% if genero_seleccionado == genero.id %}selected{% endif %}>
+                {{ genero.nombre }}
+            </option>
+        {% endfor %}
+    </select>
+</form>
+{% endif %}
+
+<div class="row">
+    {% for producto in productos %}
+        <div class="col-md-4 mb-4">
+            <div class="card h-100">
+                {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" class="card-img-top" alt="{{ producto.titulo }}" style="height: 300px; object-fit: cover;">
+                {% endif %}
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">{{ producto.titulo }}</h5>
+                    <h6 class="card-subtitle mb-2 text-muted">{{ producto.artista }}</h6>
+                    <p class="card-text fw-bold fs-5 mt-auto">${{ producto.precio|floatformat:0 }}</p>
+                    <a href="{% url 'catalog_detail' producto.id %}" class="btn btn-outline-primary">Ver detalle</a>
+                </div>
+            </div>
+        </div>
+    {% empty %}
+        <p class="text-muted">No hay productos disponibles.</p>
+    {% endfor %}
+</div>
+{% endblock %}

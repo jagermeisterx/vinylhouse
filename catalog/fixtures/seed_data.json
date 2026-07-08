@@ -1,0 +1,50 @@
+[
+  {
+    "model": "catalog.genre",
+    "pk": 1,
+    "fields": {
+      "nombre": "Glam Rock"
+    }
+  },
+  {
+    "model": "catalog.genre",
+    "pk": 2,
+    "fields": {
+      "nombre": "Rock Progresivo"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 1,
+    "fields": {
+      "titulo": "Aladdin Sane (50th Anniversary, Silver Vinyl)",
+      "artista": "David Bowie",
+      "descripcion": "Edición limitada del 50 aniversario en vinilo plateado. Incluye el icónico rayo en el rostro de Bowie como portada. Un clásico del glam rock que marcó una época.",
+      "genero": 1,
+      "precio": "34990.00",
+      "stock": 10,
+      "imagen": "productos/david_bowie_aladdin.webp",
+      "anio_lanzamiento": 1973,
+      "activo": true,
+      "creado_en": "2026-07-08T00:00:00Z",
+      "actualizado_en": "2026-07-08T00:00:00Z"
+    }
+  },
+  {
+    "model": "catalog.product",
+    "pk": 2,
+    "fields": {
+      "titulo": "The Dark Side of the Moon (Remastered)",
+      "artista": "Pink Floyd",
+      "descripcion": "Edición remasterizada en vinilo 180g. Incluye temas como 'Money', 'Time' y 'Us and Them'. Una obra maestra del rock progresivo.",
+      "genero": 2,
+      "precio": "29990.00",
+      "stock": 15,
+      "imagen": "productos/pink_floyd_tdsotm.jpg",
+      "anio_lanzamiento": 1973,
+      "activo": true,
+      "creado_en": "2026-07-08T00:00:00Z",
+      "actualizado_en": "2026-07-08T00:00:00Z"
+    }
+  }
+]

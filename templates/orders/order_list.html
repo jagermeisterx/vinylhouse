@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1 class="mb-4">Mis órdenes</h1>
+
+{% if orders %}
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th># Orden</th>
+                <th>Fecha</th>
+                <th>Productos</th>
+                <th>Total</th>
+                <th>Estado</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for order in orders %}
+                <tr>
+                    <td>{{ order.id }}</td>
+                    <td>{{ order.fecha_creacion|date:"d/m/Y H:i" }}</td>
+                    <td>{{ order.items.count }}</td>
+                    <td>${{ order.total|floatformat:0 }}</td>
+                    <td><span class="badge bg-success">{{ order.estado }}</span></td>
+                    <td><a href="{% url 'order_detail' order.id %}" class="btn btn-sm btn-outline-primary">Ver</a></td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+    <p class="text-muted">No tienes órdenes registradas.</p>
+    <a href="{% url 'catalog_list' %}" class="btn btn-primary">Ir al catálogo</a>
+{% endif %}
+{% endblock %}
